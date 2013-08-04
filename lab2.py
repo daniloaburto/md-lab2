@@ -26,7 +26,7 @@ if __name__ == '__main__':
     parser.add_argument("--classes", help="Indica si los consecuentes de las reglas son clases.",type=bool)
     args = parser.parse_args()
     
-    _print('\nReading files...')
+    _print('\nLeyendo archivos...')
 
     # Get transactions from files
     transactions = get_transactions(args.fnames, args.fdata)
@@ -36,7 +36,7 @@ if __name__ == '__main__':
     supcount = max(int(ceil(num_transactions * args.support)), 1)
     base_tree = FPTree(minimum_support_count=supcount) 
     
-    _print('Building FP Tree...')
+    _print('Construyendo FP Tree...')
 
     # Adding all transactions
     for transaction in transactions:
@@ -48,45 +48,42 @@ if __name__ == '__main__':
     itemsets = []
     support_counts = {}
 
-    _print('Extracting itemsets from FP Tree...')
+    _print('Extrayendo itemsets desde FP Tree...')
 
     # Extract itemsets recursively
     base_tree.extract_itemsets(itemsets, support_counts)
     itemsets.sort(key=lambda itemset: itemset.length)
-
-    #for itemset in itemsets:
-    #    print(itemset)
     
-    _print('Generating rules...')
+    _print('Generando reglas...')
 
-    # Rules list
+    # Lista de reglas
     rules = []
     for itemset in itemsets:
         if itemset.length > 1:
             for single, group in itemset.pairs():
                 
-                # find support counts in a hash table
+                # Se obtiene el contador de soporte desde el diccionario
                 single.support_count = support_counts[single]
                 group.support_count = support_counts[group]
 
-                # --clasess?
+                # Reglas solo con clases en consecuente?
                 if args.classes:
                     if single.items[0].is_class:
                         rule = Rule(group, single, itemset.support_count, num_transactions)                
                         rules.append(rule)
                 else:
-                    # creating rules
+                    # se crean las reglas
                     rule1 = Rule(single, group, itemset.support_count, num_transactions)
                     rules.append(rule1)
                     
-                    # prevents duplicated rules
+                    # previene reglas duplicadas
                     if itemset.length > 2:
                         rule2 = Rule(group, single, itemset.support_count, num_transactions)                
                         rules.append(rule2)
     
     rules.sort(key=lambda rule: (rule.support, rule.confidence), reverse=True)
 
-    _print('Showing ' + str(min(args.num_rules, len(rules))) + ' of ' + str(len(rules)) + ' rules:')
+    _print('Mostando ' + str(min(args.num_rules, len(rules))) + ' de ' + str(len(rules)) + ' reglas:')
     
     i = 0
     while i < len(rules) and i < args.num_rules:
@@ -98,8 +95,4 @@ if __name__ == '__main__':
         if args.support != 0:
             print("Por favor, inténtelo nuevamente con un soporte menor")
 
-    print('')
-
-    #rules.sort(key=lambda item: items[item], reverse=True)
-    
-    
+    print('')    
