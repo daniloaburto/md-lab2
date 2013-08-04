@@ -15,7 +15,7 @@ def _print(e):
 # Rutina main
 if __name__ == '__main__':
     
-    # Arguments
+    # Se leen los argumentos
     import argparse
     parser = argparse.ArgumentParser()
 
@@ -28,7 +28,7 @@ if __name__ == '__main__':
     
     _print('\nLeyendo archivos...')
 
-    # Get transactions from files
+    # Se obtienen las transacciones desde los archivos
     transactions = get_transactions(args.fnames, args.fdata)
     num_transactions = float(len(transactions))
     
@@ -38,7 +38,7 @@ if __name__ == '__main__':
     
     _print('Construyendo FP Tree...')
 
-    # Adding all transactions
+    # Agregando todas las transacciones al árbol
     for transaction in transactions:
         base_tree.add_transaction(transaction)
     
@@ -50,7 +50,7 @@ if __name__ == '__main__':
 
     _print('Extrayendo itemsets desde FP Tree...')
 
-    # Extract itemsets recursively
+    # Se extraen itemsets de forma recursiva
     base_tree.extract_itemsets(itemsets, support_counts)
     itemsets.sort(key=lambda itemset: itemset.length)
     
